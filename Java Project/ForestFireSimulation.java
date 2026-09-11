@@ -29,8 +29,8 @@ public class ForestFireSimulation {
                 if (terrainNumber < 60) {
                     int age = random.nextInt(11);
                     int height = 3 + random.nextInt(8);
-                    int fuel = 40 + random.nextInt(30);
-                    int burnRate = 2 + random.nextInt(4);
+                    int fuel = 50 + random.nextInt(40);
+                    int burnRate = 2 + random.nextInt(2);
                     float moisture = 0.3f + random.nextFloat() * 0.3f;
 
                     terrain = new Tree(age, fuel, burnRate, moisture, height);
@@ -38,8 +38,8 @@ public class ForestFireSimulation {
                 } else if (terrainNumber < 90) {
                     int age = random.nextInt(11);
                     int density = 1 + random.nextInt(4);
-                    int fuel = 15 + random.nextInt(15);
-                    int burnRate = 4 + random.nextInt(3);
+                    int fuel = 120 + random.nextInt(60);
+                    int burnRate = 4 + random.nextInt(2);
                     float moisture = 0.1f + random.nextFloat() * 0.2f;
 
                     terrain = new Grass(age, fuel, burnRate, moisture, density);
@@ -58,7 +58,7 @@ public class ForestFireSimulation {
         return grid;
     }
 
-    public WeatherManager getWeatherManager(){
+    public WeatherManager getWeatherManager() {
         return this.weatherManager;
     }
 
@@ -79,6 +79,7 @@ public class ForestFireSimulation {
                     "The selected Grid position has no this Cell coordinate");
         }
 
+        System.out.println("MANUAL IGNITE at row=" + row + " column=" + column);
         cell.ignite(intensity);
     }
 
@@ -119,32 +120,34 @@ public class ForestFireSimulation {
     }
 
     public void addWind(int direction, int strength) {
-        for(int row = 0; row < grid.getRows(); row++){
-            for (int column = 0; column < grid.getColumns(); column++){
+        for (int row = 0; row < grid.getRows(); row++) {
+            for (int column = 0; column < grid.getColumns(); column++) {
                 Cell cell = grid.getCell(row, column);
-                if(cell.isBurning()){
-                    switch (direction) {
-                    //East
-                    case 1:    
-                    addHeat(row, column + 1, strength);
-                        break;
-                
-                    //South
-                    case 2:
-                        addHeat(row + 1, column, strength);
-                        break;
-
-                    //West
-                    case 3:
-                        addHeat(row, column - 1, strength);
-                        break;
-
-                    //North
-                    default:
-                        addHeat(row - 1, column, strength);
-                        break;
+                if (!cell.isBurning()) {
+                    continue;
                 }
-                }               
+
+                int targetRow = row;
+                int targetColumn = column;
+
+                switch (direction) {
+                    case 1:
+                        targetColumn = column + 1;
+                        break; // East
+                    case 2:
+                        targetRow = row + 1;
+                        break; // South
+                    case 3:
+                        targetColumn = column - 1;
+                        break; // West
+                    default:
+                        targetRow = row - 1;
+                        break; // North
+                }
+
+                if (grid.isInBounds(targetRow, targetColumn)) {
+                    addHeat(targetRow, targetColumn, strength);
+                }
             }
         }
     }
@@ -163,12 +166,18 @@ public class ForestFireSimulation {
                     continue;
                 }
 
+                if (cell.getTerrain().isBurnedOut()) {
+                    heatMap.setCell(row, column, 0f);
+                    continue;
+                }
+
                 if (cell.isBurning()) {
                     continue;
                 }
 
                 int intensity = (int) Math.ceil(ignitionThreshold / 10f);
 
+                System.out.println("AUTO IGNITE at row=" + row + " column=" + column);
                 cell.ignite(intensity);
 
                 if (cell.isBurning()) {

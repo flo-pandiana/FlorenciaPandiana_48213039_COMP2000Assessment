@@ -251,7 +251,7 @@ public class App {
 
         if ("Wind".equals(selectedWeather)) {
             this.simulation.getWeatherManager().createWeather(selectedWeather, selectedDirection);
-            this.statusLabel.setText("Weather applied: " + weatherDescription);
+            this.statusLabel.setText("Weather applied: Wind going " + weatherDescription);
         } else {
             this.simulation.getWeatherManager().createWeather(selectedWeather);
             this.statusLabel.setText("Weather applied: " + weatherDescription);
@@ -283,9 +283,9 @@ public class App {
             return;
         }
 
-        if (!cell.canBurn()) {
+        if (cell.getTerrain().isBurnedOut()) {
             statusLabel.setText(
-                    "This Cell cannot burn.");
+                    "This Cell has already burned out.");
 
             return;
         }

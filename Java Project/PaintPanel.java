@@ -109,6 +109,10 @@ public class PaintPanel extends JPanel {
             return Color.WHITE;
         }
 
+        if (cell.isPermanentlyBurnedOut()) {
+            return Color.DARK_GRAY;
+        }
+
         if (cell.isBurning()) {
             int intensity = cell.getFire().getIntensity();
 
