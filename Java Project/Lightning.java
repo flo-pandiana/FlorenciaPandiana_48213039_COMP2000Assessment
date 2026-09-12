@@ -1,30 +1,29 @@
-public class Lightning extends Weather{
+public class Lightning extends Weather {
 
 	private int strikesPerUpdate;
 
-	public Lightning(int strength, int duration, int[][] location, int strikesPerUpdate){
+	public Lightning(int strength, int duration, int[][] location, int strikesPerUpdate) {
 		super(strength, duration, location);
 		this.strikesPerUpdate = strikesPerUpdate;
 	}
 
-	public int getStrikesPerUpdate(){
+	public int getStrikesPerUpdate() {
 		return strikesPerUpdate;
 	}
 
 	@Override
-	public void affectSimulation(ForestFireSimulation simulation){
-		for(int i = 0; i < strikesPerUpdate; i++){
-			//Math.random is between 0.0 and 1.0, multiply it by the length of the location array to get a number that will be within the required range.
-			int randomIndex = (int)Math.random() * location.length;
+	public void affectSimulation(ForestFireSimulation simulation) {
+		Grid<Cell> grid = simulation.getGrid();
 
-			//Get a single coordinate value within the specified range.
-			int[] coordinate = location[randomIndex];
+		for (int i = 0; i < strikesPerUpdate; i++) {
+			int row = (int) (Math.random() * grid.getRows());
+			int column = (int) (Math.random() * grid.getColumns());
 
-			//Get individual row and column info.
-			int row = coordinate[0];
-			int column = coordinate[1];
+			Cell cell = grid.getCell(row, column);
 
-			simulation.igniteCell(row, column, strength);
-		}		
+			if (cell.canBurn() && !cell.isBurning()) {
+				simulation.igniteCell(row, column, strength);
+			}
+		}
 	}
 }
