@@ -251,7 +251,7 @@ public class App {
 
         if ("Wind".equals(selectedWeather)) {
             this.simulation.getWeatherManager().createWeather(selectedWeather, selectedDirection);
-            this.statusLabel.setText("Weather applied: Wind going " + weatherDescription);
+            this.statusLabel.setText("Weather applied: Wind going " + selectedDirection);
         } else {
             this.simulation.getWeatherManager().createWeather(selectedWeather);
             this.statusLabel.setText("Weather applied: " + weatherDescription);

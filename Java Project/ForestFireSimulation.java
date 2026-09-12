@@ -129,24 +129,34 @@ public class ForestFireSimulation {
 
                 int targetRow = row;
                 int targetColumn = column;
+                int oppositeRow = row;
+                int oppositeColumn = column;
 
                 switch (direction) {
                     case 1:
                         targetColumn = column + 1;
-                        break; // East
+                        oppositeColumn = column - 1;
+                        break;
                     case 2:
                         targetRow = row + 1;
-                        break; // South
+                        oppositeRow = row - 1;
+                        break;
                     case 3:
                         targetColumn = column - 1;
-                        break; // West
+                        oppositeColumn = column + 1;
+                        break;
                     default:
                         targetRow = row - 1;
-                        break; // North
+                        oppositeRow = row + 1;
+                        break;
                 }
 
                 if (grid.isInBounds(targetRow, targetColumn)) {
                     addHeat(targetRow, targetColumn, strength);
+                }
+
+                if (grid.isInBounds(oppositeRow, oppositeColumn)) {
+                    removeHeat(oppositeRow, oppositeColumn, 200f);
                 }
             }
         }

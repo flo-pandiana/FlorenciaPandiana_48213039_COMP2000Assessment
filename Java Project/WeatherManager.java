@@ -52,7 +52,7 @@ public class WeatherManager {
                 break;
         }
 
-        w = new Wind(8, 20, null, direction);
+        w = new Wind(20, 25, null, direction);
 
         if (w != null) {
             weatherList.add(w);
