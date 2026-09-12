@@ -44,9 +44,9 @@ public class App {
 
         columnsField = new JTextField("50", 4);
 
-        startPauseButton = new JButton("Pause");
+        startPauseButton = new JButton("Start");
 
-        statusLabel = new JLabel("Running -  Weather: None");
+        statusLabel = new JLabel("Paused");
 
         createMapButton = new JButton("Create New Map");
 
@@ -313,6 +313,5 @@ public class App {
 
     private void showApp() {
         frame.setVisible(true);
-        timer.start();
     }
 }

@@ -38,7 +38,7 @@ public abstract class Vegetation extends Terrain {
 
         float baseHeat = 15f;
         float moistureFactor = 1f - (moisture * 0.5f);
-        float ageFactor = Math.max(0.3f, 1f - (age * 0.05f));
+        float ageFactor = Math.max(0.3f, 1.3f - (age * 0.06f));
         float intensityFactor = 0.5f + (fireIntensity / 20f);
         return baseHeat * moistureFactor * ageFactor * intensityFactor;
     }
