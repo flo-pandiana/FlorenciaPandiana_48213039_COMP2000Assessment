@@ -1,16 +1,24 @@
-public class Rain extends Weather{
+public class Rain extends Weather {
 
 	public Rain(int strength, int duration, int[][] location) {
 		super(strength, duration, location);
 	}
 
 	@Override
-	public void affectSimulation(ForestFireSimulation simulation){
-		for(int i = 0; i < location.length; i++){	
-				int row = location[i][0];
-				int column = location[i][1];
+	public void affectSimulation(ForestFireSimulation simulation) {
+		Grid<Cell> grid = simulation.getGrid();
 
-		simulation.removeHeat(row, column, strength);
-	}		
+		for (int row = 0; row < grid.getRows(); row++) {
+			for (int column = 0; column < grid.getColumns(); column++) {
+				Cell cell = grid.getCell(row, column);
+
+				if (cell.isBurning() && Math.random() < 0.3) {
+					cell.extinguish();
+					simulation.removeHeat(row, column, strength);
+				} else if (!cell.isBurning()) {
+					simulation.removeHeat(row, column, strength / 2f);
+				}
+			}
+		}
 	}
 }

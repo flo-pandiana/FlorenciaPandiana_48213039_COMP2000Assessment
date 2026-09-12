@@ -41,6 +41,14 @@ public class Cell {
         return false;
     }
 
+    public void extinguish() {
+    if (!isBurning()) {
+        return;
+    }
+    permanentlyBurnedOut = true;
+    fire = null;
+}
+
     public boolean canBurn() {
         if (permanentlyBurnedOut) {
             return false;
