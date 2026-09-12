@@ -11,8 +11,7 @@ public class PaintPanel extends JPanel {
     public PaintPanel(ForestFireSimulation simulation) {
         if (simulation == null) {
             throw new IllegalArgumentException(
-                "Simulation cannot be null"
-            );
+                    "Simulation cannot be null");
         }
 
         this.simulation = simulation;
@@ -21,23 +20,19 @@ public class PaintPanel extends JPanel {
         Grid<Cell> grid = this.simulation.getGrid();
 
         setPreferredSize(
-            new Dimension(
-                grid.getColumns() * this.cellSize,
-                grid.getRows() * this.cellSize
-            )
-        );
+                new Dimension(
+                        grid.getColumns() * this.cellSize,
+                        grid.getRows() * this.cellSize));
 
         setBackground(Color.WHITE);
         setToolTipText(
-            "Click a green cell to start a fire"
-        );
+                "Click a green cell to start a fire");
     }
 
     public void setSimulation(ForestFireSimulation simulation) {
         if (simulation == null) {
             throw new IllegalArgumentException(
-                "Simulation cannot be null"
-            );
+                    "Simulation cannot be null");
         }
 
         this.simulation = simulation;
@@ -45,17 +40,15 @@ public class PaintPanel extends JPanel {
         Grid<Cell> grid = this.simulation.getGrid();
 
         setPreferredSize(
-            new Dimension(
-                grid.getColumns() * this.cellSize,
-                grid.getRows() * this.cellSize
-            )
-        );
+                new Dimension(
+                        grid.getColumns() * this.cellSize,
+                        grid.getRows() * this.cellSize));
 
         revalidate();
         repaint();
     }
 
-    public Grid.Position getGridPositionAt(int x,int y) {
+    public Grid.Position getGridPositionAt(int x, int y) {
 
         if (x < 0 || y < 0) {
             return null;
@@ -134,11 +127,27 @@ public class PaintPanel extends JPanel {
         }
 
         if (terrain instanceof Tree) {
-            return new Color(34, 110, 45);
+            Tree tree = (Tree) terrain;
+            int age = tree.getAge();
+            float ageFactor = Math.min(1f, age / 40f); 
+
+            int red = (int) (120 + (34 - 120) * ageFactor);
+            int green = (int) (200 + (110 - 200) * ageFactor);
+            int blue = (int) (100 + (45 - 100) * ageFactor);
+
+            return new Color(red, green, blue);
         }
 
         if (terrain instanceof Grass) {
-            return new Color(120, 190, 70);
+            Grass grass = (Grass) terrain;
+            int age = grass.getAge();
+            float ageFactor = Math.min(1f, age / 40f);
+
+            int red = (int) (180 + (120 - 180) * ageFactor);
+            int green = (int) (230 + (190 - 230) * ageFactor);
+            int blue = (int) (120 + (70 - 120) * ageFactor);
+
+            return new Color(red, green, blue);
         }
 
         if (terrain instanceof River) {

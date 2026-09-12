@@ -24,10 +24,7 @@ public class Cell {
     }
 
     public Boolean hasTerrain() {
-        if (terrain != null) {
-            return true;
-        }
-        return false;
+        return terrain != null;
     }
 
     public Terrain getTerrain() {
@@ -35,19 +32,16 @@ public class Cell {
     }
 
     public boolean isBurning() {
-        if (fire != null) {
-            return true;
-        }
-        return false;
+        return fire != null;
     }
 
     public void extinguish() {
-    if (!isBurning()) {
-        return;
+        if (!isBurning()) {
+            return;
+        }
+        permanentlyBurnedOut = true;
+        fire = null;
     }
-    permanentlyBurnedOut = true;
-    fire = null;
-}
 
     public boolean canBurn() {
         if (permanentlyBurnedOut) {
@@ -66,7 +60,7 @@ public class Cell {
         terrain.burn(fire.getIntensity());
         fire.incrementTicksBurning();
 
-        int burnDuration = 8;
+        int burnDuration = 12;
         int elapsed = fire.getTicksBurning();
 
         if (elapsed >= burnDuration) {
@@ -76,13 +70,7 @@ public class Cell {
             return;
         }
 
-        if (terrain.isBurnedOut()) {
-            permanentlyBurnedOut = true;
-            fire = null;
-            return;
-        }
-
-        int newIntensity = Math.max(1, 10 - (elapsed * 10 / burnDuration));
+        int newIntensity = Math.max(1, (int) Math.round(10 - (elapsed * 10.0 / burnDuration)));
         fire.setIntensityAbsolute(newIntensity);
     }
 

@@ -34,7 +34,6 @@ public class ForestFireSimulation {
                     float moisture = 0.3f + random.nextFloat() * 0.3f;
 
                     terrain = new Tree(age, fuel, burnRate, moisture, height);
-
                 } else if (terrainNumber < 90) {
                     int age = random.nextInt(11);
                     int density = 1 + random.nextInt(4);
