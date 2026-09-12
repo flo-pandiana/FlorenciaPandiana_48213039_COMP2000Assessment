@@ -1,16 +1,39 @@
 public class Heatwave extends Weather {
 
-	Heatwave(int strength, int duration, int location[][]) {
+	public Heatwave(int strength, int duration, int[][] location) {
 		super(strength, duration, location);
 	}
 
 	@Override
 	public void affectSimulation(ForestFireSimulation simulation) {
-		for (int i = 0; i < location.length; i++) {
-			int row = location[i][0];
-			int column = location[i][1];
+		Grid<Cell> grid = simulation.getGrid();
 
-			simulation.addHeat(row, column, strength);
+		for (int row = 0; row < grid.getRows(); row++) {
+			for (int column = 0; column < grid.getColumns(); column++) {
+				Cell cell = grid.getCell(row, column);
+
+				if (!cell.isBurning()) {
+					continue;
+				}
+
+				for (int rowOffset = -2; rowOffset <= 2; rowOffset++) {
+					for (int columnOffset = -2; columnOffset <= 2; columnOffset++) {
+
+						int targetRow = row + rowOffset;
+						int targetColumn = column + columnOffset;
+
+						if (!grid.isInBounds(targetRow, targetColumn)) {
+							continue;
+						}
+
+						Cell target = grid.getCell(targetRow, targetColumn);
+
+						if (target.canBurn() && !target.isBurning() && Math.random() < 0.03) {
+							simulation.igniteCell(targetRow, targetColumn, strength);
+						}
+					}
+				}
+			}
 		}
 	}
 }

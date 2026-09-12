@@ -20,7 +20,7 @@ public class WeatherManager {
                 w = new Rain(8, 20, null);
                 break;
             case "Heatwave":
-                w = new Heatwave(2, 20, null);
+                w = new Heatwave(2, 9, null);
                 break;
             case "Lightning":
                 w = new Lightning(10, 3, null, 3);
