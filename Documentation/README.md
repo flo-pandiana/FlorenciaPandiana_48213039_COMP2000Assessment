@@ -1,7 +1,7 @@
 # COMP2000Assessment
 
 ## UML Diagram
-![[UML Diagram ver 4.png]]
+[[UML Diagram ver 5.png]]
 
 ## Forest Fire Simulation
 Java simulation of how weather (lightning, rain, wind, heatwave) affect fire spread across a grid. The grid is a 2D array of cells, where each cell has some kind of terrain (river, or a vegetation type like tree or grass). Fire spreads based on heat, fuel, and whatever weather is currently affecting the grid. The simulation runs in Swing, with a JPanel inside a JFrame.
