@@ -13,10 +13,10 @@ public class Burnable implements FlammableStrategy {
         burnRate = 0;
     }
 
-    public Burnable(int f, int bR) {
+    public Burnable(int f, int br) {
         burning = false;
         fuel = f;
-        burnRate = bR;
+        burnRate = br;
     }
 
     public boolean canBurn(){

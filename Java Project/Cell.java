@@ -58,18 +58,19 @@ public class Cell {
         if (!terrain.canBurn()) return;
 
         terrain.burn(fire.getIntensity());
-        fire.incrementTicksBurning();
+        fire.incrementTicksBurning(); //age the fire by one tick
 
         int burnDuration = 12;
         int elapsed = fire.getTicksBurning();
 
         if (elapsed >= burnDuration) {
-            terrain.burn(250);
-            permanentlyBurnedOut = true;
+            terrain.burn(250); //force remaining fuel to 0
+            permanentlyBurnedOut = true; //cell can never reignite
             fire = null;
             return;
         }
 
+        //fade intensity from 10 down to 1 as elapsed approaches burnDuration
         int newIntensity = Math.max(1, (int) Math.round(10 - (elapsed * 10.0 / burnDuration)));
         fire.setIntensityAbsolute(newIntensity);
     }

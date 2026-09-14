@@ -1,16 +1,16 @@
 package Flammability;
 public abstract interface FlammableStrategy {
-    default boolean canBurn(){
+    public default boolean canBurn(){
         return false;
     };
-    default boolean isBurnedOut(){
+    public default boolean isBurnedOut(){
         return false;
     };
-    default boolean isBurning(){
+    public default boolean isBurning(){
         return false;
     }
-    void burn(int intensity, float dampener);
-    void ignite();
-    int getFuel();
-    int getBurnRate();
+    public void burn(int intensity, float dampener);
+    public void ignite();
+    public int getFuel();
+    public int getBurnRate();
 }

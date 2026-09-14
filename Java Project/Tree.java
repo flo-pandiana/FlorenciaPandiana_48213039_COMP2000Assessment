@@ -16,6 +16,7 @@ public class Tree extends Vegetation {
         return super.calculateSpreadHeat(fireIntensity) + this.height;
     }
 
+    @Override
     public void update() {
         super.update(); // Increases age via parent update logic
         if (getAge() % 5 == 0) {

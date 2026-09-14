@@ -27,24 +27,24 @@ public class ForestFireSimulation {
                 Terrain terrain;
 
                 if (terrainNumber < 60) {
-                    int age = random.nextInt(11);
-                    int height = 3 + random.nextInt(8);
-                    int fuel = 50 + random.nextInt(40);
-                    int burnRate = 2 + random.nextInt(2);
-                    float moisture = 0.3f + random.nextFloat() * 0.3f;
+                    int age = random.nextInt(11);  //age 0 to 10
+                    int height = 3 + random.nextInt(8); //height 3 to 10
+                    int fuel = 50 + random.nextInt(40); //fuel 50 to 89
+                    int burnRate = 2 + random.nextInt(2); //burnRate 2 to 3
+                    float moisture = 0.3f + random.nextFloat() * 0.3f; //moisture 0.3 to 0.6
 
                     terrain = new Tree(age, fuel, burnRate, moisture, height);
                 } else if (terrainNumber < 90) {
-                    int age = random.nextInt(11);
-                    int density = 1 + random.nextInt(4);
-                    int fuel = 120 + random.nextInt(60);
-                    int burnRate = 4 + random.nextInt(2);
-                    float moisture = 0.1f + random.nextFloat() * 0.2f;
+                    int age = random.nextInt(11); //age 0 to 10
+                    int density = 1 + random.nextInt(4); //height 1 to 4
+                    int fuel = 120 + random.nextInt(60); //fuel 120 to 179
+                    int burnRate = 4 + random.nextInt(2); //burnRate 4 to 5
+                    float moisture = 0.1f + random.nextFloat() * 0.2f; //moisture 0.1 to 0.3
 
                     terrain = new Grass(age, fuel, burnRate, moisture, density);
 
                 } else {
-                    float coolingStrength = 0.1f + random.nextFloat() * 0.2f;
+                    float coolingStrength = 0.1f + random.nextFloat() * 0.2f; //coolingStrength 0.1 to 0.3
                     terrain = new River(coolingStrength);
                 }
 
