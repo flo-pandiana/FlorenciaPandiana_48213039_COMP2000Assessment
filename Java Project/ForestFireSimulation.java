@@ -28,24 +28,24 @@ public class ForestFireSimulation {
             Terrain terrain;
 
             if (terrainNumber < 60) {
-                int age = random.nextInt(11);  //age 0 to 10
-                int height = 3 + random.nextInt(8); //height 3 to 10
-                int fuel = 50 + random.nextInt(40); //fuel 50 to 89
-                int burnRate = 2 + random.nextInt(2); //burnRate 2 to 3
-                float moisture = 0.3f + random.nextFloat() * 0.3f; //moisture 0.3 to 0.6
+                int age = random.nextInt(11); // age 0 to 10
+                int height = 3 + random.nextInt(8); // height 3 to 10
+                int fuel = 50 + random.nextInt(40); // fuel 50 to 89
+                int burnRate = 2 + random.nextInt(2); // burnRate 2 to 3
+                float moisture = 0.3f + random.nextFloat() * 0.3f; // moisture 0.3 to 0.6
 
                 terrain = new Tree(age, fuel, burnRate, moisture, height);
             } else if (terrainNumber < 90) {
-                int age = random.nextInt(11); //age 0 to 10
-                int density = 1 + random.nextInt(4); //height 1 to 4
-                int fuel = 120 + random.nextInt(60); //fuel 120 to 179
-                int burnRate = 4 + random.nextInt(2); //burnRate 4 to 5
-                float moisture = 0.1f + random.nextFloat() * 0.2f; //moisture 0.1 to 0.3
+                int age = random.nextInt(11); // age 0 to 10
+                int density = 1 + random.nextInt(4); // height 1 to 4
+                int fuel = 120 + random.nextInt(60); // fuel 120 to 179
+                int burnRate = 4 + random.nextInt(2); // burnRate 4 to 5
+                float moisture = 0.1f + random.nextFloat() * 0.2f; // moisture 0.1 to 0.3
 
                 terrain = new Grass(age, fuel, burnRate, moisture, density);
 
             } else {
-                float coolingStrength = 0.1f + random.nextFloat() * 0.2f; //coolingStrength 0.1 to 0.3
+                float coolingStrength = 0.1f + random.nextFloat() * 0.2f; // coolingStrength 0.1 to 0.3
                 terrain = new River(coolingStrength);
             }
 
@@ -197,10 +197,7 @@ public class ForestFireSimulation {
     }
 
     private void updateCells() {
-        for (Grid.Entry<Cell> entry : grid) {
-            Cell cell = entry.getValue();
-            cell.updateBurningState();
-        }
+        grid.forEach(entry -> entry.getValue().updateBurningState());
     }
 
     private void spreadFires() {
@@ -237,15 +234,13 @@ public class ForestFireSimulation {
     }
 
     private void applyRiverCooling() {
-        for (Grid.Entry<Cell> entry : grid) {
-            int row = entry.getRow();
-            int column = entry.getColumn();
-
-            Cell cell = entry.getValue();
-            Terrain terrain = cell.getTerrain();
+        grid.forEach(entry -> {
+        int row = entry.getRow();
+        int column = entry.getColumn();
+        Terrain terrain = entry.getValue().getTerrain();
 
             if (!(terrain instanceof River)) {
-                continue;
+                return;
             }
 
             River river = (River) terrain;
@@ -257,19 +252,16 @@ public class ForestFireSimulation {
 
                 removeHeat(neighbour.getRow(), neighbour.getColumn(), cooling / 2.0f);
             }
-        }
+        });
     }
 
     private void evolveTerrain() {
-        for (Grid.Entry<Cell> entry : grid) {
+        grid.forEach(entry -> {
             Cell cell = entry.getValue();
 
-            if (cell != null
-                    && !cell.isBurning()
-                    && cell.getTerrain() != null) {
-
+            if (cell != null && !cell.isBurning() && cell.getTerrain() != null) {
                 cell.getTerrain().update();
             }
-        }
+        });
     }
 }
