@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 public class Grid<T> implements Iterable<Grid.Entry<T>> {
     private int rows;
@@ -99,18 +100,9 @@ public class Grid<T> implements Iterable<Grid.Entry<T>> {
     }
 
     public List<T> neighbours(int row, int column) {
-        List<T> neighbourValues = new ArrayList<T>();
-
-        for (Position position : neighbourPositions(row, column)) {
-            T value = getCell(
-                position.getRow(),
-                position.getColumn()
-            );
-
-            neighbourValues.add(value);
-        }
-
-        return neighbourValues;
+        return neighbourPositions(row, column).stream()
+            .map(position -> getCell(position.getRow(), position.getColumn()))
+            .collect(Collectors.toList());
     }
 
     public List<Position> neighbourPositions(int row, int column) {

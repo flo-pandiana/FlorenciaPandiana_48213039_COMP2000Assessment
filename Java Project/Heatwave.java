@@ -8,14 +8,13 @@ public class Heatwave extends Weather {
 	public void affectSimulation(ForestFireSimulation simulation) {
 		Grid<Cell> grid = simulation.getGrid();
 
-		for (Grid.Entry<Cell> entry : grid) {
+		grid.forEach(entry -> {
+			if (!entry.getValue().isBurning()) {
+				return;
+			}
+
 			int row = entry.getRow();
 			int column = entry.getColumn();
-			Cell cell = entry.getValue();
-
-			if (!cell.isBurning()) {
-				continue;
-			}
 
 			for (int rowOffset = -2; rowOffset <= 2; rowOffset++) {
 				for (int columnOffset = -2; columnOffset <= 2; columnOffset++) {
@@ -34,6 +33,6 @@ public class Heatwave extends Weather {
 					}
 				}
 			}
-		}
+		});
 	}
 }

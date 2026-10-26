@@ -119,13 +119,13 @@ public class ForestFireSimulation {
     }
 
     public void addWind(int direction, int strength) {
-        for (Grid.Entry<Cell> entry : grid) {
+        grid.forEach(entry -> {
+            if (!entry.getValue().isBurning()) {
+                return;
+            }
+
             int row = entry.getRow();
             int column = entry.getColumn();
-            Cell cell = entry.getValue();
-            if (!cell.isBurning()) {
-                continue;
-            }
 
             int targetRow = row;
             int targetColumn = column;
@@ -158,7 +158,7 @@ public class ForestFireSimulation {
             if (grid.isInBounds(oppositeRow, oppositeColumn)) {
                 removeHeat(oppositeRow, oppositeColumn, 200f);
             }
-        }
+        });
     }
 
     private void igniteHeatedCells() {
@@ -201,14 +201,14 @@ public class ForestFireSimulation {
     }
 
     private void spreadFires() {
-        for (Grid.Entry<Cell> entry : grid) {
+        grid.forEach(entry -> {
             int row = entry.getRow();
             int column = entry.getColumn();
 
             Cell sourceCell = entry.getValue();
 
             if (!sourceCell.isBurning()) {
-                continue;
+                return;
             }
 
             try {
@@ -230,7 +230,7 @@ public class ForestFireSimulation {
             } catch (IllegalArgumentException e) {
                 System.out.println("Can't burn on cell (" + row + ", " + column + ")");
             }
-        }
+        });
     }
 
     private void applyRiverCooling() {
