@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class WeatherManager {
@@ -84,12 +85,18 @@ public class WeatherManager {
         weatherList.forEach(w -> advanceDecrement(w));
 
         List<Weather> expired = weatherList.stream()
-            .filter(w -> !isActive(w))
-            .collect(Collectors.toList());
+            .collect(Collectors.partitioningBy(this::isActive))
+            .get(false);
         weatherList.removeAll(expired);
         expired.forEach(w -> observers.forEach(o -> o.weatherEnded(w)));
 
         weatherList.forEach(w -> w.affectSimulation(simulation));
+    }
+
+    public Map<String, List<Weather>> groupingByActiveNames() {
+        return weatherList.stream()
+            .filter(this::isActive)
+            .collect(Collectors.groupingBy(w -> w.getClass().getSimpleName()));
     }
 
     public List<String> getActiveWeatherNames() {

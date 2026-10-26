@@ -1,4 +1,7 @@
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,6 +33,7 @@ public class App {
     private JButton createMapButton;
     private JButton applyWeatherButton;
     private JLabel statusLabel;
+    private JLabel activeWeatherLabel;
     private JComboBox<String> weatherBox;
     private JComboBox<String> windDirectionBox;
 
@@ -47,6 +51,8 @@ public class App {
         startPauseButton = new JButton("Start");
 
         statusLabel = new JLabel("Paused");
+
+        activeWeatherLabel = new JLabel("Active weather: None");
 
         observeWeather(simulation);
 
@@ -111,9 +117,13 @@ public class App {
         weatherControlPanel.add(windDirectionBox);
         weatherControlPanel.add(applyWeatherButton);
 
-        JPanel controlPanel = new JPanel(new GridLayout(2, 1));
+        JPanel activeWeatherPanel = new JPanel(new FlowLayout());
+        activeWeatherPanel.add(activeWeatherLabel);
+
+        JPanel controlPanel = new JPanel(new GridLayout(3, 1));
         controlPanel.add(mapControlPanel);
         controlPanel.add(weatherControlPanel);
+        controlPanel.add(activeWeatherPanel);
 
         JScrollPane scrollPane = new JScrollPane(paintPanel);
 
@@ -219,6 +229,7 @@ public class App {
             paintPanel.setSimulation(newSimulation);
 
             observeWeather(newSimulation);
+            updateActiveWeatherLabel();
 
             weatherBox.setSelectedItem("None");
 
@@ -265,13 +276,27 @@ public class App {
                     @Override
                     public void weatherStarted(Weather weather) {
                         statusLabel.setText("Weather started: " + weather.getClass().getSimpleName());
+                        updateActiveWeatherLabel();
                     }
 
                     @Override
                     public void weatherEnded(Weather weather) {
                         statusLabel.setText("Weather ended: " + weather.getClass().getSimpleName());
+                        updateActiveWeatherLabel();
                     }
                 });
+    }
+
+    private void updateActiveWeatherLabel() {
+        WeatherManager manager = simulation.getWeatherManager();
+        List<String> names = manager.getActiveWeatherNames();
+        Map<String, List<Weather>> grouped = manager.groupingByActiveNames();
+
+        String text = names.isEmpty() ? "None" : names.stream()
+                .map(name -> name + " x" + grouped.get(name).size())
+                .collect(Collectors.joining(", "));
+
+        activeWeatherLabel.setText("Active weather: " + text);
     }
 
     private void igniteClickedCell(
