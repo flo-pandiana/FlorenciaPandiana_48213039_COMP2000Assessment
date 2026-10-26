@@ -5,11 +5,12 @@ public class WeatherManager {
     private ArrayList<Weather> weatherList = new ArrayList<>();
 
     public boolean isActive(Weather w) {
-        if (w.getDuration() <= 0) {
-            return false;
-        }
+        return w.getDuration()<=0;
+        // if (w.getDuration() <= 0) {
+        //     return false;
+        // }
 
-        return true;
+        // return true;
     }
 
     public void createWeather(String weather) {
@@ -64,17 +65,8 @@ public class WeatherManager {
     }
 
     public void update(ForestFireSimulation simulation) {
-        Iterator<Weather> it = weatherList.iterator();
-
-        while (it.hasNext()) {
-            Weather w = it.next();
-            advanceDecrement(w);
-
-            if (!isActive(w)) {
-                it.remove();
-            } else {
-                w.affectSimulation(simulation);
-            }
-        }
+        weatherList.forEach(w -> advanceDecrement(w));
+        weatherList.removeIf(w -> !isActive(w));
+        weatherList.forEach(w -> w.affectSimulation(simulation));
     }
 }
