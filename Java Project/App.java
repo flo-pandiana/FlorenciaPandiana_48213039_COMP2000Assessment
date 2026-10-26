@@ -48,6 +48,8 @@ public class App {
 
         statusLabel = new JLabel("Paused");
 
+        observeWeather(simulation);
+
         createMapButton = new JButton("Create New Map");
 
         weatherBox = new JComboBox<String>(
@@ -216,6 +218,8 @@ public class App {
 
             paintPanel.setSimulation(newSimulation);
 
+            observeWeather(newSimulation);
+
             weatherBox.setSelectedItem("None");
 
             frame.pack();
@@ -247,15 +251,27 @@ public class App {
     private void applySelectedWeather() {
         String selectedWeather = (String) this.weatherBox.getSelectedItem();
         String selectedDirection = (String) this.windDirectionBox.getSelectedItem();
-        String weatherDescription = selectedWeather;
 
         if ("Wind".equals(selectedWeather)) {
             this.simulation.getWeatherManager().createWeather(selectedWeather, selectedDirection);
-            this.statusLabel.setText("Weather applied: Wind going " + selectedDirection);
         } else {
             this.simulation.getWeatherManager().createWeather(selectedWeather);
-            this.statusLabel.setText("Weather applied: " + weatherDescription);
         }
+    }
+
+    private void observeWeather(ForestFireSimulation sim) {
+        sim.getWeatherManager().addObserver(
+                new WeatherObserver() {
+                    @Override
+                    public void weatherStarted(Weather weather) {
+                        statusLabel.setText("Weather started: " + weather.getClass().getSimpleName());
+                    }
+
+                    @Override
+                    public void weatherEnded(Weather weather) {
+                        statusLabel.setText("Weather ended: " + weather.getClass().getSimpleName());
+                    }
+                });
     }
 
     private void igniteClickedCell(

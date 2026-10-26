@@ -1,11 +1,27 @@
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class WeatherManager {
     private ArrayList<Weather> weatherList = new ArrayList<>();
+    private List<WeatherObserver> observers = new ArrayList<>();
+
+    public void addObserver(WeatherObserver observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(WeatherObserver observer) {
+        observers.remove(observer);
+    }
+
+    private void addWeather(Weather w) {
+        weatherList.add(w);
+        observers.forEach(o -> o.weatherStarted(w));
+    }
 
     public boolean isActive(Weather w) {
-        return w.getDuration()<=0;
+        return w.getDuration() > 0;
         // if (w.getDuration() <= 0) {
         //     return false;
         // }
@@ -31,7 +47,7 @@ public class WeatherManager {
         }
 
         if (w != null) {
-            weatherList.add(w);
+            addWeather(w);
         }
     }
 
@@ -56,7 +72,7 @@ public class WeatherManager {
         w = new Wind(20, 25, null, direction);
 
         if (w != null) {
-            weatherList.add(w);
+            addWeather(w);
         }
     }
 
@@ -66,7 +82,21 @@ public class WeatherManager {
 
     public void update(ForestFireSimulation simulation) {
         weatherList.forEach(w -> advanceDecrement(w));
-        weatherList.removeIf(w -> !isActive(w));
+
+        List<Weather> expired = weatherList.stream()
+            .filter(w -> !isActive(w))
+            .collect(Collectors.toList());
+        weatherList.removeAll(expired);
+        expired.forEach(w -> observers.forEach(o -> o.weatherEnded(w)));
+
         weatherList.forEach(w -> w.affectSimulation(simulation));
+    }
+
+    public List<String> getActiveWeatherNames() {
+        return weatherList.stream()
+            .filter(this::isActive)
+            .map(w -> w.getClass().getSimpleName())
+            .distinct()
+            .collect(Collectors.toList());
     }
 }
