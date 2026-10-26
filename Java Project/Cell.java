@@ -1,26 +1,30 @@
 public class Cell {
     Terrain terrain;
     Fire fire;
-    private boolean permanentlyBurnedOut = false;
+    private CellState state;
 
     public Cell() {
         terrain = null;
         fire = null;
+        state = new UnburntState();
     }
 
     public Cell(Terrain t) {
         terrain = t;
         fire = null;
+        state = new UnburntState();
     }
 
     public Cell(Terrain t, Fire f) {
         terrain = t;
         fire = f;
+        state = (f != null) ? new BurningState() : new UnburntState();
     }
 
     public Cell(Fire f) {
         terrain = null;
         fire = f;
+        state = (f != null) ? new BurningState() : new UnburntState();
     }
 
     public Boolean hasTerrain() {
@@ -31,57 +35,36 @@ public class Cell {
         return terrain;
     }
 
+    void setState(CellState state) {
+        this.state = state;
+    }
+
     public boolean isBurning() {
-        return fire != null;
+        return state.isBurning();
     }
 
     public void extinguish() {
-        if (!isBurning()) {
-            return;
-        }
-        permanentlyBurnedOut = true;
-        fire = null;
+        state.extinguish(this);
     }
 
     public boolean canBurn() {
-        if (permanentlyBurnedOut) {
-            return false;
-        }
-        if (terrain != null) {
-            return terrain.canBurn();
-        }
-        return false;
+        return state.canBurn(this);
     }
 
     public void updateBurningState() {
-        if (!hasTerrain() || !isBurning()) return;
-        if (!terrain.canBurn()) return;
-
-        terrain.burn(fire.getIntensity());
-        fire.incrementTicksBurning(); //age the fire by one tick
-
-        int burnDuration = 12;
-        int elapsed = fire.getTicksBurning();
-
-        if (elapsed >= burnDuration) {
-            terrain.burn(250); //force remaining fuel to 0
-            permanentlyBurnedOut = true; //cell can never reignite
-            fire = null;
-            return;
-        }
-
-        //fade intensity from 10 down to 1 as elapsed approaches burnDuration
-        int newIntensity = Math.max(1, (int) Math.round(10 - (elapsed * 10.0 / burnDuration)));
-        fire.setIntensityAbsolute(newIntensity);
+        state.update(this);
     }
 
     public void ignite(int intensity) {
-        if (permanentlyBurnedOut) {
-            return;
-        }
+        state.ignite(this, intensity);
+    }
+
+    // Called by the states once they decide the cell should catch fire
+    void startFire(int intensity) {
         if (!hasTerrain())
             throw new IllegalStateException("Attempted to ignite a cell with no terrain.");
         fire = new Fire(intensity);
+        state = new BurningState();
         terrain.ignite();
     }
 
@@ -90,6 +73,6 @@ public class Cell {
     }
 
     public boolean isPermanentlyBurnedOut() {
-        return permanentlyBurnedOut;
+        return state.isBurnedOut();
     }
 }

@@ -75,12 +75,12 @@ public class PaintPanel extends JPanel {
     }
 
     private void drawGrid(Graphics graphics, Grid<Cell> grid) {
-        for (int row = 0; row < grid.getRows(); row++) {
-            for (int column = 0; column < grid.getColumns(); column++) {
-                Cell cell = grid.getCell(row, column);
+        for (Grid.Entry<Cell> entry : grid) {
+            int row = entry.getRow();
+            int column = entry.getColumn();
+            Cell cell = entry.getValue();
 
-                drawCell(graphics, cell, row, column);
-            }
+            drawCell(graphics, cell, row, column);
         }
     }
 

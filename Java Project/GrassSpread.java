@@ -1,12 +1,14 @@
-public class GrassSpread extends BaseSpread {
+public class GrassSpread implements SpreadHeat {
+    private final SpreadHeat inner;
     private final Grass grass;
 
-    public GrassSpread(Grass grass) {
+    public GrassSpread(SpreadHeat inner, Grass grass) {
+        this.inner = inner;
         this.grass = grass;
     }
 
     @Override
     public float calculate(int fireIntensity, float moisture, int age) {
-        return super.calculate(fireIntensity, moisture, age) + grass.getDensity();
+        return inner.calculate(fireIntensity, moisture, age) + grass.getDensity();
     }
 }

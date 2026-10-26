@@ -8,16 +8,16 @@ public class Rain extends Weather {
 	public void affectSimulation(ForestFireSimulation simulation) {
 		Grid<Cell> grid = simulation.getGrid();
 
-		for (int row = 0; row < grid.getRows(); row++) {
-			for (int column = 0; column < grid.getColumns(); column++) {
-				Cell cell = grid.getCell(row, column);
+		for (Grid.Entry<Cell> entry : grid) {
+			int row = entry.getRow();
+			int column = entry.getColumn();
+			Cell cell = entry.getValue();
 
-				if (cell.isBurning() && Math.random() < 0.3) {
-					cell.extinguish();
-					simulation.removeHeat(row, column, strength);
-				} else if (!cell.isBurning()) {
-					simulation.removeHeat(row, column, strength / 2f);
-				}
+			if (cell.isBurning() && Math.random() < 0.3) {
+				cell.extinguish();
+				simulation.removeHeat(row, column, strength);
+			} else if (!cell.isBurning()) {
+				simulation.removeHeat(row, column, strength / 2f);
 			}
 		}
 	}

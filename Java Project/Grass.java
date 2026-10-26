@@ -4,7 +4,7 @@ public class Grass extends Vegetation {
     public Grass(int age, int fuel, int burnRate, float moisture, int density) {
         super(age, fuel, burnRate, moisture);
         this.density = density;
-        this.spreadStrategy = new GrassSpread(this);
+        this.spreadStrategy = new GrassSpread(new BaseSpread(), this);
     }
 
     public int getDensity() {

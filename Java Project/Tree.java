@@ -4,7 +4,7 @@ public class Tree extends Vegetation {
     public Tree(int age, int fuel, int burnRate, float moisture, int height) {
         super(age, fuel, burnRate, moisture);
         this.height = height;
-        this.spreadStrategy = new TreeSpread(this);
+        this.spreadStrategy = new TreeSpread(new BaseSpread(), this);
     }
 
     public int getHeight() {

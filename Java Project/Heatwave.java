@@ -8,29 +8,29 @@ public class Heatwave extends Weather {
 	public void affectSimulation(ForestFireSimulation simulation) {
 		Grid<Cell> grid = simulation.getGrid();
 
-		for (int row = 0; row < grid.getRows(); row++) {
-			for (int column = 0; column < grid.getColumns(); column++) {
-				Cell cell = grid.getCell(row, column);
+		for (Grid.Entry<Cell> entry : grid) {
+			int row = entry.getRow();
+			int column = entry.getColumn();
+			Cell cell = entry.getValue();
 
-				if (!cell.isBurning()) {
-					continue;
-				}
+			if (!cell.isBurning()) {
+				continue;
+			}
 
-				for (int rowOffset = -2; rowOffset <= 2; rowOffset++) {
-					for (int columnOffset = -2; columnOffset <= 2; columnOffset++) {
+			for (int rowOffset = -2; rowOffset <= 2; rowOffset++) {
+				for (int columnOffset = -2; columnOffset <= 2; columnOffset++) {
 
-						int targetRow = row + rowOffset;
-						int targetColumn = column + columnOffset;
+					int targetRow = row + rowOffset;
+					int targetColumn = column + columnOffset;
 
-						if (!grid.isInBounds(targetRow, targetColumn)) {
-							continue;
-						}
+					if (!grid.isInBounds(targetRow, targetColumn)) {
+						continue;
+					}
 
-						Cell target = grid.getCell(targetRow, targetColumn);
+					Cell target = grid.getCell(targetRow, targetColumn);
 
-						if (target.canBurn() && !target.isBurning() && Math.random() < 0.03) {
-							simulation.igniteCell(targetRow, targetColumn, strength);
-						}
+					if (target.canBurn() && !target.isBurning() && Math.random() < 0.03) {
+						simulation.igniteCell(targetRow, targetColumn, strength);
 					}
 				}
 			}

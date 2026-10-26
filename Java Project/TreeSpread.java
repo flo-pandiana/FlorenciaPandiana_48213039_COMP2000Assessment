@@ -1,12 +1,14 @@
-public class TreeSpread extends BaseSpread {
+public class TreeSpread implements SpreadHeat {
+    private final SpreadHeat inner;
     private final Tree tree;
 
-    public TreeSpread(Tree tree) {
+    public TreeSpread(SpreadHeat inner, Tree tree) {
+        this.inner = inner;
         this.tree = tree;
     }
 
     @Override
     public float calculate(int fireIntensity, float moisture, int age) {
-        return super.calculate(fireIntensity, moisture, age) + tree.getHeight();
+        return inner.calculate(fireIntensity, moisture, age) + tree.getHeight();
     }
 }

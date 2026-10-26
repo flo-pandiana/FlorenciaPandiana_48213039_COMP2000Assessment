@@ -1,7 +1,9 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
-public class Grid<T> {
+public class Grid<T> implements Iterable<Grid.Entry<T>> {
     private int rows;
     private int columns;
     private List<List<T>> cells;
@@ -61,11 +63,35 @@ public class Grid<T> {
     }
 
     public void fill(T value) {
-        for (int row = 0; row < rows; row++) {
-            for (int column = 0; column < columns; column++) {
-                cells.get(row).set(column, value);
-            }
+        for (Entry<T> entry : this) {
+            setCell(entry.getRow(), entry.getColumn(), value);
         }
+    }
+
+    // Walks every cell row by row, so callers don't need nested loops
+    @Override
+    public Iterator<Entry<T>> iterator() {
+        return new Iterator<Entry<T>>() {
+            private int next = 0;
+
+            @Override
+            public boolean hasNext() {
+                return next < rows * columns;
+            }
+
+            @Override
+            public Entry<T> next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+
+                int row = next / columns;
+                int column = next % columns;
+                next++;
+
+                return new Entry<T>(row, column, getCell(row, column));
+            }
+        };
     }
 
     public boolean isInBounds(int row, int column) {
@@ -130,6 +156,30 @@ public class Grid<T> {
 
         public int getColumn() {
             return column;
+        }
+    }
+
+    public static class Entry<T> {
+        private int row;
+        private int column;
+        private T value;
+
+        public Entry(int row, int column, T value) {
+            this.row = row;
+            this.column = column;
+            this.value = value;
+        }
+
+        public int getRow() {
+            return row;
+        }
+
+        public int getColumn() {
+            return column;
+        }
+
+        public T getValue() {
+            return value;
         }
     }
 }
