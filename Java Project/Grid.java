@@ -3,6 +3,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Grid<T> implements Iterable<Grid.Entry<T>> {
     private int rows;
@@ -67,6 +68,11 @@ public class Grid<T> implements Iterable<Grid.Entry<T>> {
         for (Entry<T> entry : this) {
             setCell(entry.getRow(), entry.getColumn(), value);
         }
+    }
+
+    // Only safe when each cell is processed independently of the others
+    public Stream<T> parallelStream() {
+        return cells.parallelStream().flatMap(List::stream);
     }
 
     // Walks every cell row by row, so callers don't need nested loops

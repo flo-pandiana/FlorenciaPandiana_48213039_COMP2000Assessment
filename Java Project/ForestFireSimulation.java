@@ -1,6 +1,10 @@
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
 
 public class ForestFireSimulation {
+    private static final ForkJoinPool POOL = new ForkJoinPool(4);
+
     private Grid<Cell> grid;
     private Grid<Float> heatMap;
     private float ignitionThreshold;
@@ -196,8 +200,20 @@ public class ForestFireSimulation {
         }
     }
 
+    // Runs the task on our own pool instead of the shared common pool
+    private void runInPool(Runnable task) {
+        try {
+            POOL.submit(task).get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            throw new IllegalStateException(e.getCause());
+        }
+    }
+
+    // Each cell only updates itself, so this is safe to run in parallel
     private void updateCells() {
-        grid.forEach(entry -> entry.getValue().updateBurningState());
+        runInPool(() -> grid.parallelStream().forEach(Cell::updateBurningState));
     }
 
     private void spreadFires() {
@@ -255,13 +271,10 @@ public class ForestFireSimulation {
         });
     }
 
+    // Each terrain only updates itself, so this is safe to run in parallel
     private void evolveTerrain() {
-        grid.forEach(entry -> {
-            Cell cell = entry.getValue();
-
-            if (cell != null && !cell.isBurning() && cell.getTerrain() != null) {
-                cell.getTerrain().update();
-            }
-        });
+        runInPool(() -> grid.parallelStream()
+                .filter(cell -> cell != null && !cell.isBurning() && cell.getTerrain() != null)
+                .forEach(cell -> cell.getTerrain().update()));
     }
 }
