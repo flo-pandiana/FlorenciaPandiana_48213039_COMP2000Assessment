@@ -26,7 +26,7 @@ public class PaintPanel extends JPanel {
 
         setBackground(Color.WHITE);
         setToolTipText(
-                "Click a green cell to start a fire");
+                "Left-click to start a fire, right-click to place a firefighter");
     }
 
     public void setSimulation(ForestFireSimulation simulation) {
@@ -72,6 +72,20 @@ public class PaintPanel extends JPanel {
 
         Grid<Cell> grid = this.simulation.getGrid();
         drawGrid(graphics, grid);
+        drawFirefighters(graphics);
+    }
+
+    private void drawFirefighters(Graphics graphics) {
+        for (Firefighter firefighter : this.simulation.getFirefighters()) {
+            int x = firefighter.getColumn() * this.cellSize;
+            int y = firefighter.getRow() * this.cellSize;
+
+            graphics.setColor(Color.BLUE);
+            graphics.fillOval(x + 1, y + 1, this.cellSize - 2, this.cellSize - 2);
+
+            graphics.setColor(Color.WHITE);
+            graphics.drawOval(x + 1, y + 1, this.cellSize - 2, this.cellSize - 2);
+        }
     }
 
     private void drawGrid(Graphics graphics, Grid<Cell> grid) {

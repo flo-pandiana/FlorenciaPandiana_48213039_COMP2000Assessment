@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
@@ -9,6 +12,7 @@ public class ForestFireSimulation {
     private Grid<Float> heatMap;
     private float ignitionThreshold;
     private WeatherManager weatherManager = new WeatherManager();
+    private List<Firefighter> firefighters = new ArrayList<>();
 
     public ForestFireSimulation(int rows, int columns, Random random) {
         if (random == null) {
@@ -65,6 +69,21 @@ public class ForestFireSimulation {
         return this.weatherManager;
     }
 
+    public List<Firefighter> getFirefighters() {
+        return Collections.unmodifiableList(firefighters);
+    }
+
+    public void addFirefighter(int row, int column) {
+        if (!grid.isInBounds(row, column)) {
+            throw new IndexOutOfBoundsException(
+                    "Invalid grid position: (" + row + ", " + column + ")");
+        }
+
+        Firefighter firefighter = new Firefighter(row, column);
+        firefighters.add(firefighter);
+        weatherManager.addObserver(firefighter);
+    }
+
     public float getIgnitionThreshold() {
         return ignitionThreshold;
     }
@@ -117,6 +136,8 @@ public class ForestFireSimulation {
         weatherManager.update(this);
         spreadFires();
         applyRiverCooling();
+        // Not parallel: firefighters move and change other cells
+        firefighters.forEach(firefighter -> firefighter.act(this));
         updateCells();
         igniteHeatedCells();
         evolveTerrain();

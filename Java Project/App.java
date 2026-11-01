@@ -32,6 +32,7 @@ public class App {
     private JButton startPauseButton;
     private JButton createMapButton;
     private JButton applyWeatherButton;
+    private JButton addFirefighterButton;
     private JLabel statusLabel;
     private JLabel activeWeatherLabel;
     private JComboBox<String> weatherBox;
@@ -78,6 +79,8 @@ public class App {
 
         applyWeatherButton = new JButton("Apply Weather");
 
+        addFirefighterButton = new JButton("Add Firefighter");
+
         timer = new Timer(
                 500,
                 new ActionListener() {
@@ -108,6 +111,7 @@ public class App {
 
         mapControlPanel.add(createMapButton);
         mapControlPanel.add(startPauseButton);
+        mapControlPanel.add(addFirefighterButton);
 
         JPanel weatherControlPanel = new JPanel(new FlowLayout());
 
@@ -117,13 +121,13 @@ public class App {
         weatherControlPanel.add(windDirectionBox);
         weatherControlPanel.add(applyWeatherButton);
 
-        JPanel activeWeatherPanel = new JPanel(new FlowLayout());
-        activeWeatherPanel.add(activeWeatherLabel);
-
-        JPanel controlPanel = new JPanel(new GridLayout(3, 1));
+        JPanel controlPanel = new JPanel(new GridLayout(2, 1));
         controlPanel.add(mapControlPanel);
         controlPanel.add(weatherControlPanel);
-        controlPanel.add(activeWeatherPanel);
+
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.add(statusLabel, BorderLayout.WEST);
+        bottomPanel.add(activeWeatherLabel, BorderLayout.EAST);
 
         JScrollPane scrollPane = new JScrollPane(paintPanel);
 
@@ -133,7 +137,7 @@ public class App {
 
         frame.add(scrollPane, BorderLayout.CENTER);
 
-        frame.add(statusLabel, BorderLayout.SOUTH);
+        frame.add(bottomPanel, BorderLayout.SOUTH);
 
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -184,13 +188,27 @@ public class App {
                     }
                 });
 
+        addFirefighterButton.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(
+                            ActionEvent event) {
+
+                        addRandomFirefighter();
+                    }
+                });
+
         paintPanel.addMouseListener(
                 new MouseAdapter() {
                     @Override
-                    public void mouseClicked(
+                    public void mousePressed(
                             MouseEvent event) {
 
-                        igniteClickedCell(event);
+                        if (SwingUtilities.isRightMouseButton(event)) {
+                            placeFirefighter(event);
+                        } else {
+                            igniteClickedCell(event);
+                        }
                     }
                 });
     }
@@ -339,6 +357,37 @@ public class App {
         paintPanel.repaint();
 
         statusLabel.setText("Fire started at row " + row + ", column " + column);
+    }
+
+    private void addRandomFirefighter() {
+        Grid<Cell> grid = simulation.getGrid();
+        Random random = new Random();
+
+        int row = random.nextInt(grid.getRows());
+        int column = random.nextInt(grid.getColumns());
+
+        simulation.addFirefighter(row, column);
+
+        paintPanel.repaint();
+
+        statusLabel.setText("Firefighter placed at row " + row + ", column " + column);
+    }
+
+    private void placeFirefighter(MouseEvent event) {
+        Grid.Position position = paintPanel.getGridPositionAt(event.getX(), event.getY());
+
+        if (position == null) {
+            return;
+        }
+
+        int row = position.getRow();
+        int column = position.getColumn();
+
+        simulation.addFirefighter(row, column);
+
+        paintPanel.repaint();
+
+        statusLabel.setText("Firefighter placed at row " + row + ", column " + column);
     }
 
     public static void main(String[] args) {
